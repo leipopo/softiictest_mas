@@ -92,6 +92,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    BD_I2C_write(0x10);
+    delay_us(10);//100 000Hz
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

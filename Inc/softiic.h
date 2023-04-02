@@ -1,7 +1,9 @@
 #ifndef __SIIC_H
 #define __SIIC_H
 #include "stdint.h"
-#include "stm32f10x.h"
+#include "stm32f1xx.h"
+
+#define delaytime 4
 
 #define HIGH 1
 #define LOW 0
@@ -31,6 +33,7 @@
 #define READ_SDA			PDin(SDA_PIN)//读数据
 
 //extern void sw_i2c_start();
-
+extern void BD_I2C_write(unsigned int addr);
+extern void delay_us(uint32_t us);
 
 #endif 

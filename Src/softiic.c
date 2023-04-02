@@ -1,5 +1,20 @@
 #include "softiic.h"
 
+void delay_us(uint32_t us)
+{
+     uint32_t temp;
+     SysTick->LOAD=us*72;//72MHz主频
+     SysTick->VAL=0x00;
+     SysTick->CTRL=0x01;
+     do
+     {
+         temp=SysTick->CTRL;
+     }
+     while((temp&0x01)&&!(temp&(1<<16)));
+     SysTick->CTRL=0x00;
+     SysTick->VAL=0X00;
+}
+
 unsigned short BD_Add_OddEven(unsigned short byte)
 {
     unsigned char i;
@@ -50,13 +65,92 @@ unsigned short BD_Check_OddEven(unsigned short byte)
 
 void BD_I2C_start(void)
 {
-    sda_gpio=gpio_out_setup(sda_pin, 1);
-    scl_gpio=gpio_out_setup(scl_pin, 1);
-    BD_setHigh(scl_gpio);
-    BD_setHigh(sda_gpio);
-    ndelay_bd(delay_m);
-    BD_setLow(sda_gpio);
-    ndelay_bd(delay_m);
-    BD_setLow(scl_gpio);
-    ndelay_bd(delay_m);
+    SET_SDA=1;
+    SET_SCL=1;
+    delay_us(delaytime);
+    SET_SDA=0;
+    delay_us(delaytime);
+    SET_SCL=0;
+}
+
+void BD_I2C_stop(void)
+{
+
+	SET_SDA=0;
+	SET_SCL=0;
+	delay_us(delaytime);
+	SET_SCL=1;
+	SET_SDA=1;
+	delay_us(delaytime);
+}
+
+uint16_t BD_i2c_read(void)
+{
+    uint16_t b = 1024;
+
+    //BD_read_lock = 1;
+    BD_I2C_start();
+
+    SET_SDA=1;
+    SET_SCL=1;
+    delay_us(delaytime);
+    SET_SCL=0;
+
+    delay_us(delaytime);
+    b = 0;
+    SET_SDA=1;
+    //sda_gpio_in = gpio_in_setup(sda_pin, 1);
+    for (unsigned char i = 0; i <= 10; i++)
+    {
+        b <<= 1;
+        delay_us(delaytime);
+        SET_SCL=1;
+        if (READ_SDA==1)
+            b |= 1;
+        delay_us(delaytime);
+        SET_SCL=0;
+    }
+    BD_I2C_stop();
+    if (BD_Check_OddEven(b) && (b & 0x3FF) < 1020)
+        b = (b & 0x3FF);
+    if (b > 1024)
+        b = 1024;
+    //BD_read_lock = 0;
+    return b;
+}
+
+void BD_I2C_write(unsigned int addr)
+{
+    BD_I2C_start();
+    //// write
+    SET_SDA=0;
+    SET_SCL=1;
+    delay_us(delaytime);
+    SET_SCL=0;
+    addr = BD_Add_OddEven(addr);
+    /// write address
+    delay_us(delaytime);
+    for (int i = 10; i >= 0; i--)
+    {
+        if ((addr >> i) & 0x01)
+        {
+            SET_SDA=1;
+        }
+        else
+        {
+            SET_SDA=0;
+        }
+        delay_us(delaytime);
+        SET_SCL=1;
+        delay_us(delaytime);
+        SET_SCL=0;
+        delay_us(delaytime);
+        //     BD_setLow(sda_gpio);
+        // ndelay_bd(delay_m);
+        // BD_setHigh(scl_gpio);
+        // ndelay_bd(delay_m);
+        // BD_setLow(scl_gpio);
+        // ndelay_bd(delay_m);
+    }
+    BD_I2C_stop();
 }
