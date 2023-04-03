@@ -3,7 +3,7 @@
 #include "stdint.h"
 #include "stm32f1xx.h"
 
-#define delaytime 4
+#define delaytime 2
 
 #define HIGH 1
 #define LOW 0
