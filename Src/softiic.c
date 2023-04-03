@@ -16,18 +16,18 @@ void iicioinit()
 void SDA_READ2SET()
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin  = GPIO_PIN_1;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pin              = GPIO_PIN_1;
+    GPIO_InitStruct.Mode             = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull             = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 }
 
 void SDA_SET2READ()
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin  = GPIO_PIN_1;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pin              = GPIO_PIN_1;
+    GPIO_InitStruct.Mode             = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull             = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 }
 
@@ -90,15 +90,17 @@ void BD_I2C_start(void)
     SET_SDA = 0;
     delay_us(delaytime);
     SET_SCL = 0;
+    delay_us(delaytime);
 }
 
 void BD_I2C_stop(void)
 {
-
+    //delay_us(delaytime);
     SET_SDA = 0;
-    SET_SCL = 0;
+
     delay_us(delaytime);
     SET_SCL = 1;
+    delay_us(delaytime);
     SET_SDA = 1;
     delay_us(delaytime);
 }

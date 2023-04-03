@@ -91,10 +91,10 @@ int main(void)
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
-        BD_I2C_write(0xAB);
+        BD_I2C_write(0x00AA);
         // SET_SCL = 1;
         // SET_SDA = 1;
-        delay_us(100); // 10 000Hz
+        delay_us(1); // 10 00Hz
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
